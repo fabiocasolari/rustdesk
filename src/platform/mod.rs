@@ -100,6 +100,7 @@ impl WakeLock {
     }
 }
 
+#[cfg(not(target_os = "ios"))]
 pub fn get_wakelock(_display: bool) -> WakeLock {
     hbb_common::log::info!("new wakelock, require display on: {_display}");
     #[cfg(target_os = "android")]
@@ -125,6 +126,12 @@ impl Drop for InstallingService {
     fn drop(&mut self) {
         *INSTALLING_SERVICE.lock().unwrap() = false;
     }
+}
+
+#[cfg(any(target_os = "android", target_os = "ios"))]
+#[inline]
+pub fn is_prelogin() -> bool {
+    false
 }
 
 #[cfg(test)]
